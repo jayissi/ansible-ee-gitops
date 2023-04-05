@@ -83,7 +83,7 @@ spec:
       name: verbose
       type: string
     - default: >-
-        registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8@sha256:6c3980b3d28c8fb92b17466f5654d5f484ab893f1673ec8f29e49c0d03f8aca9
+        registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8:v1.9.2-1
       description: The image providing the git-init binary that this Task runs.
       name: gitInitImage
       type: string
