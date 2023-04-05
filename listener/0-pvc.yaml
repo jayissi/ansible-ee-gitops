@@ -1,7 +1,7 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: ansible-builder-demo
+  name: ansible-builder-pvc
 spec:
   accessModes:
     - ReadWriteMany
