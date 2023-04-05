@@ -23,9 +23,9 @@ spec:
         params:
         - name: ANSIBLE_BUILDER_IMAGE
           value: >-
-            registry.redhat.io/ansible-automation-platform-21/ansible-builder-rhel8:1.0.1-47
+            registry.redhat.io/ansible-automation-platform-23/ansible-builder-rhel8:latest
         - name: NAME
-          value: quay.io/jtudelag/ansible-ee-test
+          value: # Container_Registry/Repository/Image:Tag
         - name: TAG
           value: $(tt.params.short-id)
         - name: TLSVERIFY
