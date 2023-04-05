@@ -48,6 +48,10 @@ spec:
     name: TLSVERIFY
     type: string
     default: "false"
+  - description: Name of the container registry to push to.
+    name: PUSH_REGISTRY
+    type: string
+    default: "johnny-aap-hub.apps.kmod.gcpopenshift.info"
   tasks:
 
     - name: fetch-repository
@@ -94,6 +98,8 @@ spec:
         value: $(params.NAME)
       - name: TAG
         value: $(params.TAG)
+      - name: PUSH_REGISTRY
+        value: "$(params.PUSH_REGISTRY)"
       - name: CONTEXT
         value: "$(params.CONTEXT)"
       - name: DOCKERFILE
