@@ -10,7 +10,7 @@ spec:
   - name: git-url
     type: string
     description: url of the git repo for the code of deployment
-    default: https://github.com/jtudelag/ansible-execution-environments.git
+    default: https://github.com/jayissi/ansible-execution-environments.git
   - name: git-revision
     type: string
     description: revision to be used from repo of the code for deployment (Commit id)
@@ -19,7 +19,7 @@ spec:
   - name: ANSIBLE_BUILDER_IMAGE
     description: The location of the ansible-builder image.
     type: string
-    default: registry.redhat.io/ansible-automation-platform-21/ansible-builder-rhel8:1.0.1-47
+    default: registry.redhat.io/ansible-automation-platform-23/ansible-builder-rhel8:latet
   - description: Name of the container image to be built
     name: NAME
     type: string
@@ -55,7 +55,7 @@ spec:
         name: git-clone-1-6-0
         kind: ClusterTask
       workspaces:
-      - name: output
+      - name: source
         workspace: ee-repo
       params:
       - name: url
@@ -91,30 +91,9 @@ spec:
       - name: TLSVERIFY
         value: "false"
       - name: IMAGE
-        value: $(params.NAME):$(params.TAG)
-      - name: CONTEXT
-        value: "$(params.CONTEXT)"
-      - name: DOCKERFILE
-        value: "$(params.DOCKERFILE)"
-      - name: BUILD_EXTRA_ARGS
-        value: "$(params.BUILD_ARGS)"
-      - name: PUSH_EXTRA_ARGS
-        value: "$(params.PUSH_ARGS)"
-
-    - name: build-image-latest
-      taskRef:
-        name: buildah
-        kind: ClusterTask
-      workspaces:
-      - name: source
-        workspace: ee-repo
-      runAfter:
-      - ansible-builder-create
-      params:
-      - name: TLSVERIFY
-        value: "false"
-      - name: IMAGE
-        value: $(params.NAME):latest
+        value: $(params.NAME)
+      - name: TAG
+        value: $(params.TAG)
       - name: CONTEXT
         value: "$(params.CONTEXT)"
       - name: DOCKERFILE
