@@ -52,7 +52,7 @@ spec:
 
     - name: fetch-repository
       taskRef:
-        name: git-clone
+        name: git-clone-1-9-0
         kind: ClusterTask
       workspaces:
       - name: source
