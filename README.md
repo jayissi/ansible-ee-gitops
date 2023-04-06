@@ -1,9 +1,14 @@
 # ansible-ee-gitops
 
-First create secrets manually for your private registries (pull and push images) and for the Tekton Trigger webhook.
+First create the project namespace
+
+```bash
+oc new-project <your-project>
+```
 
 ## Private Registry Secret
 
+Then create secrets manually for your private registries (pull and push images) and for the Tekton Trigger webhook.
 For example, for your private registries. In this case we am pushing to `quay.io` and also pulling from `registry.redhat.io`.
 
 ```yaml
