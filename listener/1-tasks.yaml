@@ -414,7 +414,9 @@ spec:
           fi
         fi
 
-        #buildah tag localhost/$(params.IMAGE):$(params.TAG) \
+
+        #buildah tag localhost/$(params.IMAGE):$(params.TAG)
+        
         buildah --storage-driver=$(params.STORAGE_DRIVER) push \
           --tls-verify=$(params.TLSVERIFY) \
           --digestfile $(workspaces.source.path)/image-digest \
