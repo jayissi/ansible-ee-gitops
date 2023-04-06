@@ -42,6 +42,10 @@ Then you need to link the secret `<secret-name>` to the `pipeline` SA so it can 
 oc secret link pipeline <secret-name> --for=pull,mount -n <your-namespace>
 ```
 
+> **Warning**: 
+> If registry login differ (e.g. `registry.redhat.io` and `private.automation.hub.io`),
+> you will need to create and link both secrets to `pipeline` serviceaccount.
+
 ## Install pipeline
 
 Clone Pipeline manifests repo
@@ -71,10 +75,6 @@ Apply change to your cluster
 ```bash
 oc -n <your-namespace> apply -f listener/
 ```
-> **Warning**: 
-> If registry login differ (e.g. `registry.redhat.io` and `private.automation.hub.io`),
-> you will need to create and link both secrets to `pipeline` serviceaccount.
-
 
 ## Webhook Secret Token
 
