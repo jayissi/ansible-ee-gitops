@@ -1,32 +1,34 @@
-﻿apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  name: build-ee
+  generateName: ansible-builder-
   labels:
     tekton.dev/pipeline: ansible-builder
 spec:
   params:
     - name: git-url
-      value: 'https://github.com/jtudelag/ansible-execution-environments.git'
+      value: 'https://github.com/jayissi/ansible-execution-environments.git'
     - name: git-revision
       value: main
     - name: ANSIBLE_BUILDER_IMAGE
       value: >-
-        registry.redhat.io/ansible-automation-platform-21/ansible-builder-rhel8:1.0.1-47
+        registry.redhat.io/ansible-automation-platform-23/ansible-builder-rhel8:latest
     - name: NAME
-      value: quay.io/jtudelag/ansible-ee-test
+      value: pipeline-test # ChangeMe: Image Name
     - name: TAG
-      value: test
+      value: '1.0'
     - name: CONTEXT
       value: context/
     - name: DOCKERFILE
       value: Containerfile
     - name: BUILD_ARGS
-      value: ''
+      value:
     - name: PUSH_ARGS
-      value: ''
+      value:
     - name: TLSVERIFY
       value: 'false'
+    - name: PUSH_REGISTRY
+      value: johnny-aap-hub.apps.kmod.gcpopenshift.info
   pipelineRef:
     name: ansible-builder
   serviceAccountName: pipeline

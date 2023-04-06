@@ -10,24 +10,16 @@ spec:
   - name: git-url
     type: string
     description: url of the git repo for the code of deployment
-    default: https://github.com/jtudelag/ansible-execution-environments.git
+    default: https://github.com/jayissi/ansible-execution-environments.git
   - name: git-revision
     type: string
     description: revision to be used from repo of the code for deployment (Commit id)
     default: main
-  # Ansible Builder
-  # - description: ansible-builder output verbosity
-  #   name: VERBOSITY
-  #   type: string
-  #   default: "2"
+  # ansible-builder task
   - name: ANSIBLE_BUILDER_IMAGE
     description: The location of the ansible-builder image.
     type: string
-    default: registry.redhat.io/ansible-automation-platform-21/ansible-builder-rhel8:1.0.1-47
-  # - name: OUTPUT_FILE
-  #   description: Output of the ansible-builder, either Dockerfile or Containerfile.
-  #   type: string
-  #   default: Containerfile
+    default: registry.redhat.io/ansible-automation-platform-23/ansible-builder-rhel8:latest
   - description: Name of the container image to be built
     name: NAME
     type: string
@@ -35,34 +27,39 @@ spec:
     name: TAG
     type: string
     default: "latest"
-  # - description: Path to the directory to use as context for buildah.
-  #   name: CONTEXT
-  #   type: string
-  #   default: "context/"
-  # - description: The path to the Dockerfile to execute.
-  #   name: DOCKERFILE
-  #   type: string
-  #   default: "Containerfile"
-  # - description: buildah build Args
-  #   name: BUILD_ARGS
-  #   type: string
-  #   default: ""
-  # - description: buildah push Args
-  #   name: PUSH_ARGS
-  #   type: string
-  #   default: ""
+  # Buildah task
+  - description: Path to the directory to use as context for buildah.
+    name: CONTEXT
+    type: string
+    default: "context/"
+  - description: The path to the Dockerfile to execute.
+    name: DOCKERFILE
+    type: string
+    default: "Containerfile"
+  - description: buildah build Args
+    name: BUILD_ARGS
+    type: string
+    default: ""
+  - description: buildah push Args
+    name: PUSH_ARGS
+    type: string
+    default: ""
   - description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS registry)
     name: TLSVERIFY
     type: string
     default: "false"
+  - description: Name of the container registry to push to.
+    name: PUSH_REGISTRY
+    type: string
+    default: "johnny-aap-hub.apps.kmod.gcpopenshift.info"
   tasks:
 
     - name: fetch-repository
       taskRef:
-        name: git-clone-1-6-0
-        kind: ClusterTask
+        name: git-clone
+        kind: Task
       workspaces:
-      - name: output
+      - name: source
         workspace: ee-repo
       params:
       - name: url
@@ -72,9 +69,9 @@ spec:
       - name: revision
         value: $(params.git-revision)
 
-    - name: ansible-builder
+    - name: ansible-builder-create
       taskRef:
-        name: ansible-builder-create
+        name: ansible-builder
         kind: Task
       workspaces:
       - name: source
@@ -88,7 +85,7 @@ spec:
     - name: build-image-tag
       taskRef:
         name: buildah
-        kind: ClusterTask
+        kind: Task
       workspaces:
       - name: source
         workspace: ee-repo
@@ -98,30 +95,11 @@ spec:
       - name: TLSVERIFY
         value: "false"
       - name: IMAGE
-        value: $(params.NAME):$(params.TAG)
-      - name: CONTEXT
-        value: "$(params.CONTEXT)"
-      - name: DOCKERFILE
-        value: "$(params.DOCKERFILE)"
-      - name: BUILD_EXTRA_ARGS
-        value: "$(params.BUILD_ARGS)"
-      - name: PUSH_EXTRA_ARGS
-        value: "$(params.PUSH_ARGS)"
-
-    - name: build-image-latest
-      taskRef:
-        name: buildah
-        kind: ClusterTask
-      workspaces:
-      - name: source
-        workspace: ee-repo
-      runAfter:
-      - ansible-builder-create
-      params:
-      - name: TLSVERIFY
-        value: "false"
-      - name: IMAGE
-        value: $(params.NAME):latest
+        value: $(params.NAME)
+      - name: TAG
+        value: $(params.TAG)
+      - name: PUSH_REGISTRY
+        value: "$(params.PUSH_REGISTRY)"
       - name: CONTEXT
         value: "$(params.CONTEXT)"
       - name: DOCKERFILE
