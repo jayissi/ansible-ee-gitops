@@ -3,7 +3,7 @@ kind: Trigger
 metadata:
   name: ansible-ee-t
 spec:
-  #serviceAccountName: pipeline
+  serviceAccountName: pipeline
   interceptors:
     - github:
         secretRef:
@@ -11,10 +11,10 @@ spec:
           secretKey: secretToken
         eventTypes:
         - push
-    - cel:
-        overlays:
-        - key: short_sha
-          expression: "body.head_commit.id.truncate(7)"
+#    - cel:
+#        overlays:
+#        - key: short_sha
+#          expression: "body.head_commit.id.truncate(7)"
   bindings:
   - ref: ansible-ee-tb
   template:
