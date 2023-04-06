@@ -1,3 +1,6 @@
+> **Note**: 
+> Original content from [How to Build Ansible Execution Environments with OpenShift Pipelines](https://cloud.redhat.com/blog/how-to-build-ansible-execution-environments-with-openshift-pipelines).
+
 # ansible-ee-gitops
 
 First create the project namespace
@@ -68,6 +71,10 @@ Apply change to your cluster
 ```bash
 oc -n <your-namespace> apply -f listener/
 ```
+> **Warning**: 
+> If registry login differ (e.g. `registry.redhat.io` and `private.automation.hub.io`),
+> you will need to create and link both secrets to `pipeline` serviceaccount.
+
 
 ## Webhook Secret Token
 
