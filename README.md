@@ -34,7 +34,7 @@ oc create secret docker-registry <secret-name> \
     -n <your-namespace> \
     --docker-server=<your-registry-server> \
     --docker-username=<your-name> \ 
-    --docker-password=<your-passworo>
+    --docker-password=<your-passworod>
 ```
 
 Then you need to link the secret `<secret-name>` to the `pipeline` SA so it can be used for pulling and pushing images.
