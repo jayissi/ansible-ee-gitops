@@ -23,7 +23,7 @@ or using CLI
 
 ```bash
 oc create secret docker-registry <secret-name> \
-    -n <your-namepace> \
+    -n <your-namespace> \
     --docker-server=<your-registry-server> \
     --docker-username=<your-name> \ 
     --docker-password=<your-passworo>
@@ -31,7 +31,7 @@ oc create secret docker-registry <secret-name> \
 
 Then you need to link the secret `<secret-name>` to the `pipeline` SA so it can be used for pulling and pushing images.
 ```bash
-oc secret link pipeline <secret-name> --for=pull,mount -n <your-namepace>
+oc secret link pipeline <secret-name> --for=pull,mount -n <your-namespace>
 ```
 
 ## Install pipeline
@@ -61,7 +61,7 @@ Edit the Trigger Template `listener/4-trigger-template.yaml` and set the Pipelin
 
 Apply change to your cluster
 ```bash
-oc -n <your-namepace> apply -f listener/
+oc -n <your-namespace> apply -f listener/
 ```
 
 ## Webhook Secret Token
