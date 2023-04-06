@@ -389,7 +389,7 @@ spec:
       resources: {}
       script: |
         buildah --storage-driver=$(params.STORAGE_DRIVER) bud \
-          --format=$(params.FORMAT) \
+          $(params.BUILD_EXTRA_ARGS) --format=$(params.FORMAT) \
           --tls-verify=$(params.TLSVERIFY) --no-cache \
           -f $(params.DOCKERFILE) -t $(params.IMAGE):$(params.TAG) $(params.CONTEXT)
 
@@ -418,13 +418,13 @@ spec:
         #buildah tag localhost/$(params.IMAGE):$(params.TAG)
         
         buildah --storage-driver=$(params.STORAGE_DRIVER) push \
-          --tls-verify=$(params.TLSVERIFY) \
+          $(params.PUSH_EXTRA_ARGS) --tls-verify=$(params.TLSVERIFY) \
           --digestfile $(workspaces.source.path)/image-digest \
           $(params.IMAGE):$(params.TAG) \
           $(params.PUSH_REGISTRY)/$(params.IMAGE):$(params.TAG)
 
         buildah --storage-driver=$(params.STORAGE_DRIVER) push \
-          --tls-verify=$(params.TLSVERIFY) \
+          $(params.PUSH_EXTRA_ARGS) --tls-verify=$(params.TLSVERIFY) \
           --digestfile $(workspaces.source.path)/image-digest \
           $(params.IMAGE):$(params.TAG) \
           $(params.PUSH_REGISTRY)/$(params.IMAGE):latest
