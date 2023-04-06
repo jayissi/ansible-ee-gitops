@@ -14,7 +14,7 @@ spec:
       value: >-
         registry.redhat.io/ansible-automation-platform-23/ansible-builder-rhel8:latest
     - name: NAME
-      value: pipeline-test # ChangeMe: Image Name
+      value: pipeline-test # ChangeMe: EE Name
     - name: TAG
       value: '1.0'
     - name: CONTEXT
