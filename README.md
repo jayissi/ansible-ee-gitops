@@ -3,7 +3,7 @@
 First create the project namespace
 
 ```bash
-oc new-project <your-project>
+oc new-project <your-namespace>
 ```
 
 ## Private Registry Secret
