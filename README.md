@@ -5,6 +5,7 @@ First create secrets manually for your private registries (pull and push images)
 ## Private Registry Secret
 
 For example, for your private registries. In this case we am pushing to `quay.io` and also pulling from `registry.redhat.io`.
+
 ```yaml
 apiVersion: v1
 data:
@@ -14,21 +15,53 @@ metadata:
   annotations:
     tekton.dev/docker-0: quay.io
     tekton.dev/docker-1: registry.redhat.io
-  name: pull-and-push
+  name: <secret-name>
+  namespace: <your-namespace>
 type: kubernetes.io/dockerconfigjson
 ```
+or using CLI
 
-Then you need to link the secret `pull-and-push` to the `pipeline` SA so it can be used for pulling and pushing images.
 ```bash
-oc secret link pipeline pull-and-push --for=pull,mount
+oc create secret docker-registry <secret-name> \
+    -n <your-namepace> \
+    --docker-server=<your-registry-server> \
+    --docker-username=<your-name> \ 
+    --docker-password=<your-passworo>
 ```
 
-## Install Tekton Hub ansible-builder task
-
-Go to [Tekton Hub](https://hub.tekton.dev/tekton/task/ansible-builder) and install the `ansible-builder` task.
-
+Then you need to link the secret `<secret-name>` to the `pipeline` SA so it can be used for pulling and pushing images.
 ```bash
-kubectl -n <MY_NAMESPACE> apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/ansible-builder/0.1/ansible-builder.yaml
+oc secret link pipeline <secret-name> --for=pull,mount -n <your-namepace>
+```
+
+## Install pipeline
+
+Clone Pipeline manifests repo
+```bash
+git clone https://github.com/jayissi/ansible-ee-gitops.git && cd ansible-ee-gitops
+```
+
+Edit the Trigger Template `listener/4-trigger-template.yaml` and set the PipelineRun `NAME` parameter to set the image repository name.
+```yaml
+- apiVersion: tekton.dev/v1beta1
+  kind: PipelineRun
+  metadata:
+    annotations:
+    labels:
+      tekton.dev/pipeline: ansible-builder
+    generateName: ansible-ee-triggered-run-
+  spec:
+    params:
+    - name: ANSIBLE_BUILDER_IMAGE
+      value: >-
+        registry.redhat.io/ansible-automation-platform-23/ansible-builder-rhel8:latest
+    - name: NAME
+      value: XXXXXXXXXX
+```
+
+Apply change to your cluster
+```bash
+oc -n <your-namepace> apply -f listener/
 ```
 
 ## Webhook Secret Token
