@@ -52,7 +52,7 @@ spec:
   - description: Name of the container registry to push to.
     name: PUSH_REGISTRY
     type: string
-    default: "johnny-aap-hub.apps.kmod.gcpopenshift.info"
+    default: "aap-hub.apps.redhat-demo.sandbox2219.opentlc.com"
   tasks:
 
     - name: clean-up-pvc

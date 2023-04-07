@@ -29,7 +29,7 @@ spec:
     - name: TLSVERIFY
       value: 'false'
     - name: PUSH_REGISTRY
-      value: johnny-aap-hub.apps.kmod.gcpopenshift.info
+      value: aap-hub.apps.redhat-demo.sandbox2219.opentlc.com
   pipelineRef:
     name: ansible-builder
   serviceAccountName: pipeline
