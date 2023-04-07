@@ -1,12 +1,1 @@
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: ansible-builder-pvc
-spec:
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 2Gi
-  storageClassName: ocs-storagecluster-cephfs
-  volumeMode: Filesystem
+listener/0-pvc.yaml
