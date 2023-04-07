@@ -116,6 +116,8 @@ spec:
       workspaces:
       - name: source
         workspace: ee-repo
+      runAfter:
+      - build-image-tag
       params:
       - name: deleteExisting
         value: "true"
