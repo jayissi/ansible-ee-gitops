@@ -108,3 +108,14 @@ spec:
         value: "$(params.BUILD_ARGS)"
       - name: PUSH_EXTRA_ARGS
         value: "$(params.PUSH_ARGS)"
+
+    - name: fetch-repository
+      taskRef:
+        name: clean-up
+        kind: Task
+      workspaces:
+      - name: source
+        workspace: ee-repo
+      params:
+      - name: deleteExisting
+        value: "true"
