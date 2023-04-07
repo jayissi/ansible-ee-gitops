@@ -54,6 +54,17 @@ spec:
     default: "johnny-aap-hub.apps.kmod.gcpopenshift.info"
   tasks:
 
+    - name: clean-up-pvc
+      taskRef:
+        name: clean-up
+        kind: Task
+      workspaces:
+      - name: source
+        workspace: ee-repo
+      params:
+      - name: deleteExisting
+        value: "true"
+
     - name: fetch-repository
       taskRef:
         name: git-clone
@@ -61,6 +72,8 @@ spec:
       workspaces:
       - name: source
         workspace: ee-repo
+      runAfter:
+      - clean-up-pvc
       params:
       - name: url
         value: $(params.git-url)

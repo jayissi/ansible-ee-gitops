@@ -4,7 +4,6 @@ kind: Task
 metadata:
   name: git-clone
   labels:
-    app.kubernetes.io/version: '0.8'
     operator.tekton.dev/operand-name: openshift-pipelines-addons
     operator.tekton.dev/provider-type: redhat
 spec:
@@ -268,7 +267,6 @@ kind: Task
 metadata:
   name: ansible-builder
   labels:
-    app.kubernetes.io/version: '0.8'
     operator.tekton.dev/operand-name: openshift-pipelines-addons
     operator.tekton.dev/provider-type: redhat
 spec:
@@ -314,7 +312,6 @@ apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   labels:
-    app.kubernetes.io/version: '0.8'
     operator.tekton.dev/operand-name: openshift-pipelines-addons
     operator.tekton.dev/provider-type: redhat
   name: buildah
@@ -453,7 +450,6 @@ kind: Task
 metadata:
   name: clean-up
   labels:
-    app.kubernetes.io/version: '0.8'
     operator.tekton.dev/operand-name: openshift-pipelines-addons
     operator.tekton.dev/provider-type: redhat
 spec:

@@ -15,6 +15,7 @@ Then create secrets manually for your private registries (pull and push images) 
 For example, for your private registries. In this case we am pushing to `quay.io` and also pulling from `registry.redhat.io`.
 
 ```yaml
+---
 apiVersion: v1
 data:
   .dockerconfigjson: XXXXXX
@@ -53,38 +54,38 @@ Clone Pipeline manifests repo
 git clone https://github.com/jayissi/ansible-ee-gitops.git && cd ansible-ee-gitops
 ```
 
-Edit the Trigger Template `listener/4-trigger-template.yaml` and set the PipelineRun `NAME` parameter to set the image repository name.
+Edit the PipelineRun `pipeline/3-pipeline-run.yaml` and change PipelineRun `git-url` and `NAME` parameters.
 ```yaml
-- apiVersion: tekton.dev/v1beta1
-  kind: PipelineRun
-  metadata:
-    annotations:
-    labels:
-      tekton.dev/pipeline: ansible-builder
-    generateName: ansible-ee-triggered-run-
-  spec:
-    params:
-    - name: ANSIBLE_BUILDER_IMAGE
-      value: >-
-        registry.redhat.io/ansible-automation-platform-23/ansible-builder-rhel8:latest
+---
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: ansible-builder-
+  labels:
+    tekton.dev/pipeline: ansible-builder
+spec:
+  params:
+    - name: git-url
+      value: ${GIT_CLONE_REPO}
     - name: NAME
-      value: XXXXXXXXXX
+      value: ${EE_IMAGE_NAME}
 ```
 
 Apply change to your cluster
 ```bash
-oc -n <your-namespace> apply -f listener/
+oc -n <your-namespace> create -f pipeline/
 ```
 
-## Webhook Secret Token
+## Create Webhook Secret Token
 
 And for the webhook secret token:
 ```yaml
+---
 apiVersion: v1
 kind: Secret
 metadata:
   name: ansible-ee-trigger-secret
 type: Generic
 stringData:
-  secretToken: "123"
+  secretToken: "12345"
 ```
