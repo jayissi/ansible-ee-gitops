@@ -1,11 +1,15 @@
+---
 apiVersion: triggers.tekton.dev/v1alpha1
 kind: Trigger
 metadata:
   name: ansible-ee-t
 spec:
+  serviceAccountName: pipeline
+  template:
+    ref: ansible-ee-tt
   bindings:
-    - kind: TriggerBinding
-      ref: ansible-ee-tb
+    - kind: ClusterTriggerBinding
+      ref: github-push
   interceptors:
     - params:
         - name: secretRef
@@ -18,16 +22,3 @@ spec:
       ref:
         kind: ClusterInterceptor
         name: github
-    - params:
-        - name: filter
-          value: ''
-        - name: overlays
-          value:
-            - expression: body.head_commit.id.truncate(7)
-              key: short_sha
-      ref:
-        kind: ClusterInterceptor
-        name: cel
-  serviceAccountName: pipeline
-  template:
-    ref: ansible-ee-tt

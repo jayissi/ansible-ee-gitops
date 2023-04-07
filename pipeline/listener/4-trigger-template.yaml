@@ -5,17 +5,14 @@ metadata:
   name: ansible-ee-tt
 spec:
   params:
-    - name: gitrevision
+    - name: git-revision
       description: The git revision (id)
-    - name: short-id
-      description: truncated commit id
-    - name: gitrepositoryurl
+    - name: git-repo-url
       description: The git repository url
   resourcetemplates:
     - apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
       metadata:
-        annotations:
         labels:
           tekton.dev/pipeline: ansible-builder
         generateName: ansible-ee-triggered-run-
@@ -25,17 +22,15 @@ spec:
           value: >-
             registry.redhat.io/ansible-automation-platform-23/ansible-builder-rhel8:latest
         - name: NAME
-          value: # Container_Registry/Repository/Image:Tag
+          value: pipeline-test-trigger 
         - name: TAG
-          value: $(tt.params.short-id)
+          value: $(tt.params.git-revision)
         - name: TLSVERIFY
           value: 'false'
         - name: git-url
-          value: $(tt.params.gitrepositoryurl)
+          value: $(tt.params.git-repo-url)
         - name: git-revision
-          value: $(tt.params.gitrevision)
-        - name: short-git-revision
-          value: $(tt.params.short-id)
+          value: $(tt.params.git-revision)
         pipelineRef:
           name: ansible-builder
         serviceAccountName: pipeline

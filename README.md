@@ -47,7 +47,7 @@ oc secret link pipeline <secret-name> --for=pull,mount -n <your-namespace>
 > If registry login differ (e.g. `registry.redhat.io` and `private.automation.hub.io`),
 > you will need to create and link both secrets to `pipeline` serviceaccount.
 
-## Install pipeline
+## Configure Pipeline
 
 Clone Pipeline manifests repo
 ```bash
@@ -88,4 +88,24 @@ metadata:
 type: Generic
 stringData:
   secretToken: "12345"
+```
+
+## Configure Trigger and EventListener
+
+Install the resources for Trigger, TriggerTemplate, and EventListener
+```bash
+oc -n <your-namespace> create -f pipeline/listener/
+```
+
+To configure the webhook in Github to point to the URL of our EventListener, we need to get the EventListener route URL.
+```bash
+oc -n <your-namespace> get route ansible-ee-el -o jsonpath="{.spec.host}"
+```
+
+Once complete, we can commit our Execution Environment pipeline to kick off our code.
+```bash
+git clone https://github.com/<YOUR_FORK>/ansible-execution-environments.git
+cd ansible-execution-environments
+git commit --allow-empty -m "Empty commit, trigger the pipeline!"
+git push origin main
 ```
