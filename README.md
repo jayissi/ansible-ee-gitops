@@ -1,19 +1,26 @@
 > **Note**: 
 > Original content from [How to Build Ansible Execution Environments with OpenShift Pipelines](https://cloud.redhat.com/blog/how-to-build-ansible-execution-environments-with-openshift-pipelines).
 
+>
+> For this workshop, you will need CLI access to the **_git_** and **_oc_** or **_kubectl_** command.
+>
+
 # ansible-ee-gitops
 
-First create the project namespace
-
+First set `openshift_project` as a local variable.
 ```bash
-oc new-project <your-namespace>
+openshift_project=<NAME_OF_OPENSHIFT_PROJECT>
+```
+
+Then create the openshift project.
+```bash
+oc new-project ${openshift_project}
 ```
 
 ## Private Registry Secret
 
-Then create secrets manually for your private registries (pull and push images) and for the Tekton Trigger webhook.
-For example, for your private registries. In this case we am pushing to `quay.io` and also pulling from `registry.redhat.io`.
-
+Create secrets manually for your private registries, pull and push images, for your private registries.
+In this case we are consuming images from `registry.redhat.io` and pushing to `quay.io`.
 ```yaml
 ---
 apiVersion: v1
@@ -32,15 +39,17 @@ or using CLI
 
 ```bash
 oc create secret docker-registry <secret-name> \
-    -n <your-namespace> \
+    -n ${openshift_project} \
     --docker-server=<your-registry-server> \
-    --docker-username=<your-name> \ 
+    --docker-username=<your-name> \
     --docker-password=<your-password>
 ```
 
 Then you need to link the secret `<secret-name>` to the `pipeline` SA so it can be used for pulling and pushing images.
 ```bash
-oc secret link pipeline <secret-name> --for=pull,mount -n <your-namespace>
+oc secret link pipeline <secret-name> \
+    -n ${openshift_project} \
+    --for=pull,mount
 ```
 
 > **Warning**: 
@@ -66,19 +75,19 @@ metadata:
 spec:
   params:
     - name: git-url
-      value: ${GIT_CLONE_REPO}
+      value: ${{ GIT_CLONE_REPO }}
     - name: NAME
-      value: ${EE_IMAGE_NAME}
+      value: ${{ EE_IMAGE_NAME }}
 ```
 
-Apply change to your cluster
+Apply change to your project
 ```bash
-oc -n <your-namespace> create -f pipeline/
+oc -n ${openshift_project} create -f pipeline/
 ```
 
 ## Create Webhook Secret Token
 
-And for the webhook secret token:
+Create the webhook secret token using yaml
 ```yaml
 ---
 apiVersion: v1
@@ -89,17 +98,24 @@ type: Generic
 stringData:
   secretToken: "12345"
 ```
+or CLI
+
+```bash
+oc create secret generic ansible-ee-trigger-secret \ 
+    -n ${openshift_project} \
+    --from-literal=secretToken="12345"
+```
 
 ## Configure Trigger and EventListener
 
 Install the resources for Trigger, TriggerTemplate, and EventListener
 ```bash
-oc -n <your-namespace> create -f pipeline/listener/
+oc -n ${openshift_project} create -f pipeline/listener/
 ```
 
 To configure the webhook in Github to point to the URL of our EventListener, we need to get the EventListener route URL.
 ```bash
-oc -n <your-namespace> get route ansible-ee-el -o jsonpath="{.spec.host}"
+oc -n ${openshift_project} get route ansible-ee-el -o jsonpath="http://{.spec.host}{'\n'}"
 ```
 
 Once complete, we can commit our Execution Environment pipeline to kick off our code.

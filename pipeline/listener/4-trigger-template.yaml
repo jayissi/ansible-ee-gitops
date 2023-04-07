@@ -22,7 +22,7 @@ spec:
           value: >-
             registry.redhat.io/ansible-automation-platform-23/ansible-builder-rhel8:latest
         - name: NAME
-          value: pipeline-test-trigger 
+          value: webhook-pipeline-test
         - name: TAG
           value: $(tt.params.git-revision)
         - name: TLSVERIFY
