@@ -447,3 +447,86 @@ spec:
         at the root of the Workspace with name config.json or .dockerconfigjson.
       name: dockerconfig
       optional: true
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: clean-up
+  labels:
+    app.kubernetes.io/version: '0.8'
+    operator.tekton.dev/operand-name: openshift-pipelines-addons
+    operator.tekton.dev/provider-type: redhat
+spec:
+  description: >-
+    Clean up / Remove any content from pipeline Pipeline.
+  params:
+    - default: 'true'
+      description: >-
+        Clean out the contents of the destination directory if it already exists
+        before cloning.
+      name: deleteExisting
+      type: string
+    - default: 'true'
+      description: Log the commands that are executed during `git-clone`'s operation.
+      name: verbose
+      type: string
+    - default: /tekton/home
+      description: |
+        Absolute path to the user's home directory.
+      name: userHome
+      type: string
+  results:
+    - description: The precise commit SHA that was fetched by this Task.
+      name: commit
+      type: string
+    - description: The precise URL that was fetched by this Task.
+      name: url
+      type: string
+  steps:
+    - env:
+        - name: HOME
+          value: $(params.userHome)
+        - name: PARAM_DELETE_EXISTING
+          value: $(params.deleteExisting)
+        - name: PARAM_VERBOSE
+          value: $(params.verbose)
+        - name: WORKSPACE_OUTPUT_PATH
+          value: $(workspaces.source.path)
+      image: $(params.gitInitImage)
+      name: clone
+      resources: {}
+      script: >
+        #!/usr/bin/env sh
+
+        set -eu
+
+        if [ "${PARAM_VERBOSE}" = "true" ] ; then
+          set -x
+        fi
+
+        CHECKOUT_DIR="${WORKSPACE_OUTPUT_PATH}"
+
+        cleandir() {
+          # Delete any existing contents of the repo directory if it exists.
+          #
+          # We don't just "rm -rf ${CHECKOUT_DIR}" because ${CHECKOUT_DIR} might be "/"
+          # or the root of a mounted volume.
+          if [ -d "${CHECKOUT_DIR}" ] ; then
+            # Delete non-hidden files and directories
+            rm -rf "${CHECKOUT_DIR:?}"/*
+            # Delete files and directories starting with . but excluding ..
+            rm -rf "${CHECKOUT_DIR}"/.[!.]*
+            # Delete files and directories starting with .. plus any other character
+            rm -rf "${CHECKOUT_DIR}"/..?*
+          fi
+        }
+
+        if [ "${PARAM_DELETE_EXISTING}" = "true" ] ; then
+          cleandir
+        fi
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+  workspaces:
+    - description: The git repo will be cloned onto the volume backing this Workspace.
+      name: source
