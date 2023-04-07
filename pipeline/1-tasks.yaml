@@ -525,8 +525,7 @@ spec:
           cleandir
         fi
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 65532
+        runAsNonRoot: false
   workspaces:
     - description: The git repo will be cloned onto the volume backing this Workspace.
       name: source
