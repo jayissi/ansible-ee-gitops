@@ -1,6 +1,6 @@
 >
 > For this workshop, you will need CLI access to the **_git_** and **_oc_** or **_kubectl_** command.<br>
-> Fork this git repository and follow documentation as is.
+> Fork [this](https://github.com/jayissi/ansible-execution-environments.git) git repository and follow documentation as is.
 >
 
 > **Note**: 
