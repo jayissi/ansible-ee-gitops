@@ -133,7 +133,7 @@ stringData:
 
 or CLI
 ```bash
-oc create secret generic ansible-ee-trigger-secret \ 
+oc create secret generic ansible-ee-trigger-secret \
     -n ${openshift_project} \
     --from-literal=secretToken="12345"
 ```
