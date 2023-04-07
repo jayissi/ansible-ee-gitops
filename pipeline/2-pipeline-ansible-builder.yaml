@@ -109,7 +109,7 @@ spec:
       - name: PUSH_EXTRA_ARGS
         value: "$(params.PUSH_ARGS)"
 
-    - name: fetch-repository
+    - name: clean-up-pvc
       taskRef:
         name: clean-up
         kind: Task
