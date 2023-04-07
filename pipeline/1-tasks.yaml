@@ -492,8 +492,8 @@ spec:
           value: $(params.verbose)
         - name: WORKSPACE_OUTPUT_PATH
           value: $(workspaces.source.path)
-      image: $(params.gitInitImage)
-      name: clone
+      image: registry.redhat.io/ansible-automation-platform-23/ee-minimal-rhel8:latest
+      name: clean-up
       resources: {}
       script: >
         #!/usr/bin/env sh
