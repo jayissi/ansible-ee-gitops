@@ -106,17 +106,16 @@ spec:
       value: ${{ EE_IMAGE_NAME }}
 ```
 
-> **Note**: 
-> To change the EE Image Name, update
-> [pipeline/3-pipeline-run.yaml](https://github.com/jayissi/ansible-ee-gitops/blob/main/pipeline/3-pipeline-run.yaml#L32) and
-> [pipeline/listener/2-pipeline-ansible-builder.yaml](https://github.com/jayissi/ansible-ee-gitops/blob/main/pipeline/listener/2-pipeline-ansible-builder.yaml#L55)
-
 <br />
 
 Apply change to your project
 ```bash
 oc -n ${openshift_project} create -f pipeline/
 ```
+> **Note**: 
+> To change the EE Image Name, update
+> [pipeline/3-pipeline-run.yaml](https://github.com/jayissi/ansible-ee-gitops/blob/main/pipeline/3-pipeline-run.yaml#L32) and
+> [pipeline/listener/2-pipeline-ansible-builder.yaml](https://github.com/jayissi/ansible-ee-gitops/blob/main/pipeline/listener/2-pipeline-ansible-builder.yaml#L55)
 
 <br /><br />
 
