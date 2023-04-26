@@ -52,20 +52,9 @@ spec:
   - description: Name of the container registry to push to.
     name: PUSH_REGISTRY
     type: string
-    default: "aap-hub.apps.redhat-demo.sandbox2219.opentlc.com"
+    default: ""
+
   tasks:
-
-    - name: clean-up-pvc
-      taskRef:
-        name: clean-up
-        kind: Task
-      workspaces:
-      - name: source
-        workspace: ee-repo
-      params:
-      - name: deleteExisting
-        value: "true"
-
     - name: fetch-repository
       taskRef:
         name: git-clone
@@ -73,8 +62,6 @@ spec:
       workspaces:
       - name: source
         workspace: ee-repo
-      runAfter:
-      - clean-up-pvc
       params:
       - name: url
         value: $(params.git-url)
@@ -122,3 +109,15 @@ spec:
         value: "$(params.BUILD_ARGS)"
       - name: PUSH_EXTRA_ARGS
         value: "$(params.PUSH_ARGS)"
+
+  finally:
+    - name: clean-up-pvc
+      taskRef:
+        name: clean-up
+        kind: Task
+      workspaces:
+      - name: source
+        workspace: ee-repo
+      params:
+      - name: deleteExisting
+        value: "true"
