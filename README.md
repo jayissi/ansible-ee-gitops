@@ -53,10 +53,10 @@ type: kubernetes.io/dockerconfigjson
 or using CLI
 ```bash
 oc create secret docker-registry <secret-name> \
-    -n ${openshift_project} \
     --docker-server=<your-registry-server> \
     --docker-username=<your-name> \
-    --docker-password=<your-password>
+    --docker-password=<your-password> \
+    -n ${openshift_project}
 ```
 
 <br /><br />
