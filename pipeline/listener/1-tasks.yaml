@@ -302,11 +302,41 @@ spec:
     - name: ansible-builder-create
       workingDir: $(workspaces.source.path)
       image: $(params.BUILDER_IMAGE)
+#
+# $API_TOKEN var used if external secrets maps
+# API Token to namespace from hashicorp vault.
+#
+#      env:
+#      - name: API_TOKEN
+#        valueFrom:
+#          secretKeyRef:
+#            key: api-token
+#            name: private-automation-hub
       script: |
         #!/bin/sh
         set -eux -o
 
+#        if [ -f ansible.cfg ] ; then
+#          echo "[galaxy]" > ansible.cfg
+#          echo "server_list = automation_hub_rh_certified, galaxy" >> ansible.cfg
+#          echo " " >> ansible.cfg
+#          echo "[galaxy_server.automation_hub_rh_certified]" >> ansible.cfg
+#          echo "url=https://<PRIVATE-AUTOMATION-HUB-FQDN>/api/galaxy/content/rh-certified/" >> ansible.cfg
+#          echo "token=$API_TOKEN" >> ansible.cfg
+#          echo " " >> ansible.cfg
+#          echo "[galaxy_server.galaxy]" >> ansible.cfg
+#          echo "url=https://galaxy.ansible.com/" >> ansible.cfg
+#        fi
+
         ansible-builder create -f "$(params.FILENAME)" -c "$(params.BUILD_CONTEXT)" --output-filename "$(params.OUTPUT_FILENAME)" -v "$(params.VERBOSITY)"
+
+        if [ -f entrypoint.sh ] ; then
+          cp entrypoint.sh context/_build/entrypoint.sh
+          echo ' ' >> context/Containerfile
+          echo 'ADD _build/entrypoint.sh /bin/entrypoint' >> context/Containerfile
+          echo 'RUN chmod +x /bin/entrypoint' >> context/Containerfile
+          echo 'ENTRYPOINT ["entrypoint"]' >> context/Containerfile
+        fi
 ---
 apiVersion: tekton.dev/v1beta1
 kind: Task
@@ -432,10 +462,20 @@ spec:
       volumeMounts:
         - mountPath: /var/lib/containers
           name: varlibcontainers
+#
+# rhsm volumeMount needed if EE build depends on
+# access to red hat baseos and appstream repos.
+#
+#        - mountPath: /etc/pki/entitlement
+#          name: rhsm
+#          readOnly: true
       workingDir: $(workspaces.source.path)
   volumes:
     - emptyDir: {}
       name: varlibcontainers
+#    - name: rhsm
+#      secret:
+#        secretName: rhsm
   workspaces:
     - name: source
     - description: >-
