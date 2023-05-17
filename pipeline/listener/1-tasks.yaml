@@ -335,7 +335,7 @@ spec:
           echo ' ' >> context/Containerfile
           echo 'ADD _build/entrypoint.sh /bin/entrypoint' >> context/Containerfile
           echo 'RUN chmod +x /bin/entrypoint' >> context/Containerfile
-          echo 'ENTRYPOINT ["entrypoint"]' >> context/Containerfile
+          echo 'ENTRYPOINT ["/bin/entrypoint"]' >> context/Containerfile
         fi
 ---
 apiVersion: tekton.dev/v1beta1
